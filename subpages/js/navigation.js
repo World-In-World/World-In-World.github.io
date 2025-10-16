@@ -29,7 +29,13 @@ function processCurrentFrame() {
       setTimeout(() => {
         // Complete: Check score and decide if mission ends
         const {score} = getTopAnswerer(f.actionData);
-        if (score >= 0.95) {
+        
+        // For Manip, always select the first action plan if available
+        if (currentScenario.taskType === "Manip") {
+          if (f.plans?.actionPlans?.length) {
+            f.selectedAction = {manipPlan: f.plans.actionPlans[0]};
+          }
+        } else if (score >= 0.95) {
           document.getElementById('finalVideo').style.display = 'block';
           missionEnded = true;
           if (isPlaying) togglePlayback();

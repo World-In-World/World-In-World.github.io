@@ -34,29 +34,56 @@ async function loadActionData() {
   let keys = expandFrames(epData);
   currentScenario.lastFrameKey = keys[keys.length - 1];
 
-  if (!(epData.continuous_frame === false && epData.frames.length === 1 && epData.frames[0] === 0)) {
-    keys = keys.slice(1);
-  }
+  // if (!(epData.continuous_frame === false && epData.frames.length === 1 && epData.frames[0] === 0)) {
+  //   keys = keys.slice(1);
+  // }
   availableKeys = keys;
 
   // Preload action plans
   realActionData = {};
-  await Promise.all(availableKeys.map(async id => {
+
+  if (currentScenario.taskType === "Manip") {
+    // Only load once from A000
     try {
-      const resp = await fetch(`${currentScenario.base}/${id}/action_plan.json`, {
+      const resp = await fetch(`${currentScenario.base}/A000/action_plan.json`, {
         headers: { 'Accept': 'application/json' },
         cache: 'no-store'
       });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      realActionData[id] = await resp.json();
+      const data = await resp.json();
+      // assign same data to all keys
+      for (const id of availableKeys) {
+        realActionData[id] = data;
+      }
     } catch (e) {
-      console.warn('Load failed for', id, e);
-      realActionData[id] = {
-        placeholder: true,
-        note: "No planner data for this step."
-      };
+      console.warn('Manip action plan load failed', e);
+      for (const id of availableKeys) {
+        realActionData[id] = {
+          placeholder: true,
+          note: "No planner data for this step."
+        };
+      }
     }
-  }));
+  } else {
+    // default: load each frame
+    await Promise.all(availableKeys.map(async id => {
+      try {
+        const resp = await fetch(`${currentScenario.base}/${id}/action_plan.json`, {
+          headers: { 'Accept': 'application/json' },
+          cache: 'no-store'
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        realActionData[id] = await resp.json();
+      } catch (e) {
+        console.warn('Load failed for', id, e);
+        realActionData[id] = {
+          placeholder: true,
+          note: "No planner data for this step."
+        };
+      }
+    }));
+  }
+
 }
 
 // Get plans for scenario based on task type
@@ -86,6 +113,30 @@ function getPlansForScenario(d, taskType) {
       ranking: i + 1,
       pngIndex: i + 1  // For loading bbox_gen_video_X.png
     }));
+  }
+
+  if (taskType === "Manip") {
+    const high = pd["planner_highlevel.json"] || [];
+    const imagine = pd["planner_highlevel_imagine.json"] || [];
+    
+    return {
+      actionPlans: high.map((item, i) => ({
+        title: `Final Plan ${i + 1}`,
+        reasoning: item.reasoning_and_reflection || "",
+        languagePlan: item.language_plan || "",
+        executable: item.executable_plan || [],
+        visualDesc: item.visual_state_description || "",
+        pngIndex: i + 1
+      })),
+      imaginePlans: imagine.map((item, i) => ({
+        title: `Plan ${i + 1}`,
+        reasoning: item.reasoning_and_reflection || "",
+        languagePlan: item.language_plan || "",
+        executable: item.executable_plan || [],
+        visualDesc: item.visual_state_description || "",
+        pngIndex: item.index !== undefined ? item.index + 1 : i + 1  // Use item.index if available
+      }))
+    };
   }
 
   // AR default

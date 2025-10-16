@@ -19,31 +19,56 @@ async function probe(url) {
 // Find up to 2 videos for a frame
 async function findUpToTwoVideos(k) {
   if (__videoProbeCache.has(k)) return __videoProbeCache.get(k);
-  
+
   const found = [];
   let candidates = [];
 
   if (currentScenario.taskType === "IGNav") {
     const base = `${currentScenario.base}/${k}/world_model_gen`;
-    candidates = [`${base}/bbox_gen_video_1.mp4`, `${base}/bbox_gen_video_2.mp4`];
+    candidates = [
+      `${base}/bbox_gen_video_1.mp4`,
+      `${base}/bbox_gen_video_2.mp4`
+    ];
   } else if (currentScenario.taskType === "AEQA") {
     const base = `${currentScenario.base}/${k}/world_model_gen`;
-    candidates = [`${base}/bbox_gen_video_1.png`, `${base}/bbox_gen_video_2.png`, `${base}/bbox_gen_video_3.png`];
-    // AEQA uses PNG, return first found
+    candidates = [
+      `${base}/bbox_gen_video_1.png`,
+      `${base}/bbox_gen_video_2.png`,
+      `${base}/bbox_gen_video_3.png`
+    ];
+    // AEQA uses PNGs, just return the first available
     for (const u of candidates) {
-      if (await probe(u)) return [u];
+      if (await probe(u)) {
+        __videoProbeCache.set(k, [u]);
+        return [u];
+      }
     }
+    __videoProbeCache.set(k, []);
     return [];
+  } else if (currentScenario.taskType === "Manip") {
+    const base = `${currentScenario.base}/${k}/world_model_gen`;
+    candidates = [
+      `${base}/bbox_gen_video_1.mp4`,
+      `${base}/bbox_gen_video_2.mp4`,
+      `${base}/bbox_gen_video_3.mp4`,
+      `${base}/bbox_gen_video_4.mp4`,
+      `${base}/bbox_gen_video_5.mp4`
+    ];
   } else {
     const base = `${currentScenario.base}/${k}/world_model_gen/obj_centered_gen_video`;
-    candidates = [`${base}.mp4`, `${base}_1.mp4`, `${base}_01.mp4`, `${base}_2.mp4`];
+    candidates = [
+      `${base}.mp4`,
+      `${base}_1.mp4`,
+      `${base}_01.mp4`,
+      `${base}_2.mp4`
+    ];
   }
 
   for (const u of candidates) {
     if (found.length === 2) break;
     if (await probe(u)) found.push(u);
   }
-  
+
   __videoProbeCache.set(k, found);
   return found;
 }

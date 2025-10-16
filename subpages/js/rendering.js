@@ -104,25 +104,7 @@ function displayFrame(i, skipVideoInit = false) {
         </div>
       </div>`;
 
-    // Plan box helper
-    // const planBox = (p, isAEQA = false) => {
-    //   if (!p) {
-    //     return `<div style="padding:12px;text-align:center;color:#999;font-style:italic">
-    //       (No planner output for this step)
-    //     </div>`;
-    //   }
-    //   if (isAEQA) {
-    //     return `<div class="plan-box">
-    //       <div style="font-weight:700;font-size:.85em;margin-bottom:4px">${p?.title || 'High-level Plan'}</div>
-    //       <div style="font-size:.8em;color:#555;margin-bottom:4px"><i>${p?.reason || ''}</i></div>
-    //       <div style="font-size:.9em">${p?.steps?.[0] || '—'}</div>
-    //     </div>`;
-    //   }
-    //   return `<div class="plan-box">
-    //     <div style="font-weight:700;font-size:.8em;margin-bottom:4px">${p?.title || 'Plan'}</div>
-    //     <ul style="padding-left:18px">${(p?.steps || []).slice(0, 4).map(s => `<li>${s}</li>`).join('') || '<li>—</li>'}</ul>
-    //   </div>`;
-    // };
+
     // Plan box helper - with fold/unfold support
     const planBox = (p, idx, isAEQA = false) => {
       if (!p) {
@@ -146,12 +128,13 @@ function displayFrame(i, skipVideoInit = false) {
 
     // Planning step with fold/unfold
     let sim;
-    const hasPlans = f.plans && f.plans.length > 0;
-    const planCount = hasPlans ? f.plans.length : 0;
-    const showAll = f.showAllPlans || false;
-    const visiblePlans = showAll ? f.plans : (f.plans || []).slice(0, 2);
 
     if (currentScenario.taskType === "AEQA") {
+      const hasPlans = f.plans && f.plans.length > 0;
+      const planCount = hasPlans ? f.plans.length : 0;
+      const showAll = f.showAllPlans || false;
+      const visiblePlans = showAll ? f.plans : (f.plans || []).slice(0, 2);
+
       sim = `
         <div class="step-card ${f.currentStep === 2 ? 'active' : ''}">
           <div class="step-h">
@@ -167,7 +150,48 @@ function displayFrame(i, skipVideoInit = false) {
                 </div>`}
           </div>
         </div>`;
-    } else {
+    }
+    else if (currentScenario.taskType === "Manip") {
+      const hasPlans = f.plans?.imaginePlans?.length > 0;
+      const planCount = hasPlans ? f.plans.imaginePlans.length : 0;
+      const showAll = f.showAllPlans || false;
+      const visiblePlans = hasPlans ? (showAll ? f.plans.imaginePlans : f.plans.imaginePlans.slice(0, 2)) : [];
+
+      sim = `
+        <div class="step-card ${f.currentStep === 2 ? 'active' : ''}">
+          <div class="step-h">
+            <span class="step-num">2</span>
+            <span class="step-title">Planning & World Model</span>
+            ${planCount > 2 ? `<button class="fold-btn" onclick="togglePlans(${i})" 
+              style="margin-left:auto;padding:2px 8px;font-size:.75em;border:1px solid #ccc;
+              border-radius:4px;background:#fff;cursor:pointer">
+              ${showAll ? '▲ Fold' : '▼ Show All (' + planCount + ')'}
+            </button>` : ''}
+          </div>
+          <div class="plan-pairs" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+            ${hasPlans 
+              ? visiblePlans.map((p, idx) => `
+                  <div class="plan-box">
+                    <div style="font-weight:700;font-size:.9em">${p.title}</div>
+                    <div style="font-size:.8em;color:#555"><i>${p.reasoning}</i></div>
+                    <div style="font-size:.85em">${formatNumberedList(p.languagePlan)}</div>
+                    <video id="manip-wm-${f.frameKey}-${p.pngIndex}" 
+                          autoplay loop muted 
+                          style="max-width:100%;border-radius:4px;margin-top:8px"></video>
+                  </div>`).join('')
+              : `<div style="padding:12px;text-align:center;color:#999;font-style:italic">
+                  (No planner data for this step)
+                </div>`}
+          </div>
+        </div>`;
+    }
+    else {
+      // For AR and IGNav - these have array plans
+      const hasPlans = Array.isArray(f.plans) && f.plans.length > 0;
+      const planCount = hasPlans ? f.plans.length : 0;
+      const showAll = f.showAllPlans || false;
+      const visiblePlans = hasPlans ? (showAll ? f.plans : f.plans.slice(0, 2)) : [];
+
       // Check if IGNav last frame with no plans
       if (isSpecialLastFrame && !hasPlans) {
         sim = `
@@ -181,28 +205,28 @@ function displayFrame(i, skipVideoInit = false) {
             </div>
           </div>`;
       } else {
-          // Normal planning display
-          sim = `
-            <div class="step-card ${f.currentStep === 2 ? 'active' : ''}">
-              <div class="step-h">
-                <span class="step-num">2</span>
-                <span class="step-title">Planning & World Model Simulation</span>
-                ${planCount > 2 ? `<button class="fold-btn" onclick="togglePlans(${i})" style="margin-left:auto;padding:2px 8px;font-size:.75em;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer">${showAll ? '▲ Fold' : '▼ Show All (' + planCount + ')'}</button>` : ''}
-              </div>
-              <div class="plan-pairs">
-                ${hasPlans 
-                  ? visiblePlans.map((p, idx) => planBox(p, idx, false)).join('')
-                  : `<div style="padding:12px;text-align:center;color:#999;font-style:italic">
-                      (No planner data for this step)
-                    </div>`}
-              </div>
-              <div class="sim-grid">
-                <div><video id="pred1_${f.frameKey}" autoplay loop muted></video></div>
-                <div><video id="pred2_${f.frameKey}" autoplay loop muted></video></div>
-              </div>
-            </div>`;
-        }
+        // Normal planning display
+        sim = `
+          <div class="step-card ${f.currentStep === 2 ? 'active' : ''}">
+            <div class="step-h">
+              <span class="step-num">2</span>
+              <span class="step-title">Planning & World Model Simulation</span>
+              ${planCount > 2 ? `<button class="fold-btn" onclick="togglePlans(${i})" style="margin-left:auto;padding:2px 8px;font-size:.75em;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer">${showAll ? '▲ Fold' : '▼ Show All (' + planCount + ')'}</button>` : ''}
+            </div>
+            <div class="plan-pairs">
+              ${hasPlans 
+                ? visiblePlans.map((p, idx) => planBox(p, idx, false)).join('')
+                : `<div style="padding:12px;text-align:center;color:#999;font-style:italic">
+                    (No planner data for this step)
+                  </div>`}
+            </div>
+            <div class="sim-grid">
+              <div><video id="pred1_${f.frameKey}" autoplay loop muted></video></div>
+              <div><video id="pred2_${f.frameKey}" autoplay loop muted></video></div>
+            </div>
+          </div>`;
       }
+    }
 
     // Action card helper
     const actionCard = (a, idx) => {
@@ -226,7 +250,7 @@ function displayFrame(i, skipVideoInit = false) {
       // IGNav - show selected proposal
       if (currentScenario.taskType === "IGNav" && a.steps) {
         return `<div class="plan-box" style="border:2px solid #34a853;background:#f0f9f0;border-radius:8px;padding:12px">
-          <div style="font-weight:700;font-size:.95em;margin-bottom:8px">✓ Selected Plan</div>
+          <div style="font-weight:700;font-size:.95em;margin-bottom:8px">Selected Plan</div>
           <ul style="padding-left:18px;margin:0;text-align:left">
             ${a.steps.map(s => `<li style="font-size:.85em">${s}</li>`).join('')}
           </ul>
@@ -272,7 +296,30 @@ function displayFrame(i, skipVideoInit = false) {
 
     // last frame - show success/failure message
     let action;
-    if (isSpecialLastFrame && (!f.actions3 || !f.actions3.length)) {
+    if (currentScenario.taskType === "Manip") {
+      if (f.plans?.actionPlans?.length) {
+        const p = f.plans.actionPlans[0];
+        action = `
+          <div class="step-card ${f.currentStep === 3 ? 'active' : ''}">
+            <div class="step-h"><span class="step-num">3</span>
+              <span class="step-title">Selected Action Plan</span></div>
+            <div class="plan-box" style="border:2px solid #34a853;background:#f0f9f0;
+              border-radius:8px;padding:12px">
+              <div style="margin-bottom:6px">${formatNumberedList(p.languagePlan)}</div>
+              <div style="font-size:.8em;color:#666"><i>${p.reasoning}</i></div>
+            </div>
+          </div>`;
+      } else {
+        action = `
+          <div class="step-card ${f.currentStep === 3 ? 'active' : ''}">
+            <div class="step-h"><span class="step-num">3</span>
+              <span class="step-title">Selected Action Plan</span></div>
+            <div style="padding:12px;text-align:center;color:#999;font-style:italic">
+              (No action plan available)
+            </div>
+          </div>`;
+      }
+    } else if (isSpecialLastFrame && (!f.actions3 || !f.actions3.length)) {
       const success = (currentScenario.metrics || []).some(m => m.is_success === true);
       action = `
         <div class="step-card ${f.currentStep === 3 ? 'active' : ''}">
@@ -325,8 +372,27 @@ function displayFrame(i, skipVideoInit = false) {
       ${f.status === 'current' ? seq : ''}
       <div class="${stepGridClass}">${content}</div>`;
     
-    // Load videos for non-AEQA
-    if (currentScenario.taskType !== "AEQA") {
+    // Load videos
+    if (currentScenario.taskType === "Manip") {
+      (async () => {
+        const visiblePlans = f.showAllPlans ? f.plans.imaginePlans : f.plans.imaginePlans.slice(0, 2);
+        for (const plan of visiblePlans) {
+          const vidUrl = `${currentScenario.base}/${f.frameKey}/world_model_gen/bbox_gen_video_${plan.pngIndex}.mp4`;
+          console.log('Loading Manip video:', vidUrl); // Debug log
+          const el = document.getElementById(`manip-wm-${f.frameKey}-${plan.pngIndex}`);
+          if (el) {
+            el.src = vidUrl;
+            el.crossOrigin = "anonymous";
+            el.load();
+            el.onerror = () => {
+              console.error('Failed to load video:', vidUrl);
+              el.outerHTML = `<div style="color:#999;font-size:.8em">(Video unavailable)</div>`;
+            };
+          }
+        }
+      })();
+    }
+    else if (currentScenario.taskType !== "AEQA" && currentScenario.taskType !== "Manip") {
       (async () => {
         try {
           const urls = await findUpToTwoVideos(f.frameKey);
@@ -336,7 +402,8 @@ function displayFrame(i, skipVideoInit = false) {
           console.warn('video init failed', e);
         }
       })();
-    } else {
+    } 
+    else if (currentScenario.taskType === "AEQA") {
       // Load AEQA PNGs
       (async () => {
         const visiblePlans = f.showAllPlans ? f.plans : (f.plans || []).slice(0, 2);
@@ -370,4 +437,22 @@ function displayFrame(i, skipVideoInit = false) {
       sequenceIndicator.style.display = f.status === 'current' ? 'block' : 'none';
     }
   }
+}
+
+// Format numbered lists into HTML
+function formatNumberedList(text) {
+  if (!text) return '—';
+  
+  // Check if text contains numbered items like "1. " "2. " etc
+  if (!/\d+\.\s/.test(text)) return text;
+  
+  // Split by numbered patterns and create list items
+  const items = text.split(/(?=\d+\.\s)/).filter(s => s.trim());
+  
+  return `<ol style="margin:4px 0;padding-left:20px;text-align:left;line-height:1.5">
+    ${items.map(item => {
+      const content = item.replace(/^\d+\.\s*/, '').trim();
+      return `<li style="margin:2px 0;font-size:.85em">${content}</li>`;
+    }).join('')}
+  </ol>`;
 }
