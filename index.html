@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="By grounding assessment in embodied task success instead of video metrics, World-In-World provides a principled yardstick for future research on generative world models in the context of embodiment.">
+  <meta name="robots" content="index,follow">
+  <title>World-in-World: World Models in a Closed-Loop World</title>
+  <meta property="og:title" content="World-in-World: World Models in a Closed-Loop World">
+  <meta property="og:description" content="By grounding assessment in embodied task success instead of video metrics, World-In-World provides a principled yardstick for future research on generative world models in the context of embodiment.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://example.com">
+  <meta property="og:image" content="assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://example.com">
+  <link rel="icon" type="image/jpeg" href="media/genex_logo.png">
+  <link rel="shortcut icon" type="image/jpeg" href="media/genex_logo.png">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <header class="site-header" role="banner">
+    <div class="container">
+      <a class="brand" href="#hero">
+        <img src="media/logo.svg"
+        alt="World-In-World"
+        class="inline-logo-larger">
+      </a>
+      <button class="nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="Primary">
+        <a href="#abstract">Abstract</a>
+        <a href="#overview">Overview</a>
+        <a href="#pipeline">Evaluation Pipeline</a>
+        <a href="#examples">Task Examples</a>
+        <a href="#results">Results and Analysis</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section id="hero" class="hero hero-centered">
+      <div class="container">
+        <div class="hero-content">
+          <img src="media/logo.svg" alt="Project logo" class="logo-title">
+          <h1>World Models in a Closed-Loop World</h1>
+          <p class="subtitle">The first comprehensive <em>closed-loop</em> benchmark for visual world models.</p>
+          <p class="authors">Author One<sup>1</sup>, Author Two<sup>1</sup>, Author Three<sup>2</sup></p>
+          <p class="affiliations"><sup>1</sup> University A, <sup>2</sup> Institute B</p>
+          <div class="cta">
+            <a class="button primary" href="#" target="_blank" rel="noopener"><span class="emoji">📄</span>Paper</a>
+            <a class="button ghost" aria-disabled="true" tabindex="-1"><span class="emoji">💻</span>Code (Coming Soon)</a>
+            <a class="button primary" href="subpages/index.html"><span class="emoji">🕹️</span>Interactive Demo</a>
+            <a class="button primary" href="subpages/leaderboard.html"><span class="emoji">🏆</span>Leaderboard</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tldr" class="section alt tldr">
+      <div class="container">
+        <div class="tldr-line">
+          <span class="demo-label">TLDR:</span>
+          <p class="tldr-text">By grounding assessment in embodied task success instead of video metrics, <img src="media/logo.svg" alt="World-In-World" class="inline-logo"> provides a principled yardstick for future research on generative world models in the context of embodiment.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="section">
+      <div class="container">
+        <div class="demo-card">
+          <!-- <div class="demo-header"> -->
+            <!-- <span class="demo-label">Demo video:</span> -->
+            <!-- <span class="demo-subtitle">Placeholder Demo Title</span> -->
+          <!-- </div> -->
+          <div class="demo-media">
+            <div class="framed-media">
+              <video class="demo-video" controls preload="metadata">
+                <source src="media/demo.mp4" type="video/mp4">
+              </video>
+            </div>
+            <!-- <p class="caption">Our video demo</p> -->
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="abstract" class="section alt">
+      <div class="container">
+        <h2>Abstract</h2>
+        <p>Generative world models (WMs) can now simulate worlds with striking visual realism, which naturally raises the question of whether they can endow embodied agents with predictive perception for decision making. Progress on this question has been limited by fragmented evaluation: most existing benchmarks adopt open-loop protocols that emphasize <em>visual quality</em> in isolation, leaving the core issue of <em>embodied utility</em> unresolved, i.e., <em>do WMs actually help agents succeed at embodied tasks?</em></p>
+        <p>To address this gap, we introduce <img src="media/logo.svg" alt="World-In-World" class="inline-logo">, the first open platform that benchmarks WMs in a closed-loop world that mirrors real agent-environment interactions. <img src="media/logo.svg" alt="World-In-World" class="inline-logo"> provides a unified online planning strategy and a standardized action API, enabling heterogeneous WMs for decision making.</p>
+        <p>We curate four closed-loop environments that rigorously evaluate diverse WMs, prioritize task success as the primary metric, and move beyond the common focus on visual quality; we also present the first data scaling law for world models in embodied settings.</p>
+        <p>Our study uncovers three surprises: (1) visual quality alone does not guarantee task success—controllability matters more; (2) scaling post-training with action-observation data is more effective than upgrading the pretrained video generators; and (3) allocating more inference-time compute allows WMs to substantially improve closed-loop performance. By centering evaluation on closed-loop outcomes, <img src="media/logo.svg" alt="World-In-World" class="inline-logo"> establishes a new benchmark for the systematic assessment of WMs.</p>
+      </div>
+    </section>
+    <section id="overview" class="section">
+      <div class="container">
+        <h2>Overview</h2>
+        <!-- <p>We introduce the first open benchmark to evaluate world models by closed-loop task success, analyze the link between task success and visual quality, and investigate scaling laws.</p> -->
+        <div class="media-single">
+          <div class="media-frame">
+            <!-- <div class="framed-media"> -->
+              <img src="media/overview.png" alt="Overview" class="responsive-image">
+            <!-- </div> -->
+            <p class="caption caption-pipeline">
+              In this work, we propose <img src="media/logo.svg" alt="World-In-World" class="inline-logo">, which wraps generative <u>World</u> models <u>In</u> a closed-loop <u>World</u> interface to measure their practical utility for embodied agents.
+              <em>We test whether generated worlds actually enhance embodied reasoning and task performance</em>—for example, helping an agent perceive the environment, plan and execute actions, and replan based on new observations <em>within such a closed loop</em>. Establishing this evaluation framework is essential for tracking genuine progress across the rapidly expanding landscape of visual world models and embodied AI.
+              <!-- Specifically, we present a unified strategy for closed-loop online planning and a standardized action API to seamlessly integrate diverse world models into closed-loop tasks.
+              The online planning strategy allows the agent to look ahead by anticipating environmental changes and task rewards before committing to an action. The standardized action API harmonizes input modalities expected by different world models, so that each model can be controlled consistently within the same evaluation protocol. In addition, we introduce a post-training protocol that fine-tunes pretrained video generators using a modest amount of action-observation data drawn from the same action space as the downstream tasks, which allows us to examine their adaptation potential and to characterize a data scaling law. -->
+              <!-- We introduce the first open benchmark to evaluate world models by closed-loop task success, analyze the link between task success and visual quality. -->
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="pipeline" class="section alt">
+      <div class="container">
+        <h2>Evaluation Pipeline</h2>
+        <div class="media-single">
+          <div class="media-frame">
+            <!-- <div class="framed-media"> -->
+            <video class="demo-video" controls preload="metadata">
+              <source src="media/WIW_framework.mp4" type="video/mp4">
+            </video>
+            <!-- </div> -->
+            <p class="caption caption-pipeline">
+              Closed-loop online planning in <img src="media/logo.svg" alt="World-In-World" class="inline-logo">:
+              <br>
+              &nbsp;&nbsp; 1) At time step <em>t</em>, the agent receives the world state, represented by observation <strong>o</strong><sub><em>t</em></sub>.
+              <br>
+              &nbsp;&nbsp; 2) Then it invokes a proposal policy π<sub>proposal</sub> (❶) to produce a total of <em>M</em> candidate action plans.
+              <br>
+              &nbsp;&nbsp; 3) The unified action API (❷) transforms each plan into the control inputs required by the world model.
+              <br>
+              &nbsp;&nbsp; 4) The world model (❸) then predicts the corresponding future states as observations <strong>Ô</strong><sub><em>t</em></sub>.
+              <br>
+              &nbsp;&nbsp; 5) The revision policy π<sub>revision</sub> (❹) evaluates all rollouts and commits to the best, yielding decision <strong>D</strong>*<sub><em>t</em></sub>.
+              <br>
+              &nbsp;&nbsp; 6) This decision is applied in the environment, closing the interaction loop.
+            </p>
+          </div>
+        </div>
+        <!-- <p>Describe the end-to-end pipeline and data flow.</p> -->
+      </div>
+    </section>
+    <section id="examples" class="section">
+      <div class="container">
+        <h2>Task Examples</h2>
+        <p>We provide four benchmark tasks that are carefully designed to evaluate the utility of visual world models in a closed-loop setting.</p>
+        <div class="media-single">
+          <div class="media-frame">
+            <!-- <div class="framed-media"> -->
+            <img src="media/task_overview.png" alt="Task Overview" class="responsive-image">
+            <!-- </div> -->
+          </div>
+        </div>
+
+        <!-- Embedded HTML block -->
+        <div class="media-single">
+          <div class="media-frame media-frame-wide media-frame-themed" style="--frame-width:160ch;">
+            <div class="embedded-frame-header"><span class="emoji">🕹️</span>Interactive Task Examples</div>
+              <iframe class="embedded-iframe" data-auto-height="true" src="subpages/index.html" title="Interactive Task Examples"></iframe>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="results" class="section alt">
+      <div class="container">
+        <h2>Results and Analysis</h2>
+        <p>Showcase qualitative and quantitative results and analysis.</p>
+
+
+        <!-- <div class="media-grid">
+          <div class="media-card">
+            <div class="media-placeholder" role="img" aria-label="Result image placeholder"></div>
+            <p class="caption">Result example 1</p>
+          </div>
+          <div class="media-card">
+            <div class="media-placeholder" role="img" aria-label="Result image placeholder"></div>
+            <p class="caption">Result example 2</p>
+          </div>
+          <div class="media-card">
+            <div class="media-placeholder" role="img" aria-label="Result image placeholder"></div>
+            <p class="caption">Result example 3</p>
+          </div>
+        </div>
+      </div> -->
+
+      <div class="media-single">
+        <div class="media-frame">
+          <div class="framed-media" style="width:85%;height:auto;display:block;margin:0 auto;box-shadow:none;border-width:3px;">
+          <img src="media/result_aes_sr.png"
+          alt="Result AES-SR"
+          class="responsive-image"
+          >
+          </div>
+          </img>
+          <p class="caption caption-pipeline">
+            <strong>Controllability matters more than visuals for task success.</strong>
+            Recent video generators (e.g., Wan2.1) produce appealing clips but offer limited low-level control from text prompts, so they help embodied tasks only modestly without adaptation.
+            After action-conditioned post-training, action-motion alignment improves and success rates rise.
+            <br>
+            <em>Left:</em> Embodied task success rate vs. visual quality. † = post-trained with extra data.
+            <br>
+            <em>Right:</em> higher controllability correlates with higher SR. Precise control, not just visual quality, enables effective decision-making.
+          </p>
+        </div>
+      </div>
+
+      <div class="media-single">
+        <div class="media-frame">
+          <div class="framed-media" style="width:85%;height:auto;display:block;margin:0 auto;box-shadow:none;border-width:3px;">
+          <img src="media/train_test_scaling.png" 
+            alt="Train-Test Scaling"
+            class="responsive-image"
+          >
+          </div>
+          </img>
+          <p class="caption caption-pipeline">
+            <strong>Scaling improves performance: data and inference time.</strong>
+            Post-training data scaling: training Wan2.2†, Wan2.1† and SVD† for one epoch on 400 → 80K instances consistently boosts AR performance (e.g., Wan2.1† 60.25% → 63.34%, SVD† 56.80% → 60.98%). Wan2.2† (A14B) reaches nearly Wan2.1† after ~40K, suggesting action-conditioned post-training is more impactful than upgrading the pretrained generator. Larger models benefit more and saturate less than smaller ones.
+            Inference-time scaling: increasing world-model inferences per episode improves AR success (e.g., SVD† 53.36% → 60.98% when raising average rollouts from 3 to 11). More simulated futures let the planner choose better actions.
+            † denotes action-conditioned post-training.
+          </p>
+        </div>
+
+        <!-- Embedded HTML block -->
+        <div class="media-single">
+          <div class="media-frame media-frame-wide media-frame-themed" style="--frame-width:160ch;">
+            <div class="embedded-frame-header"><span class="emoji">🏆</span> World-In-World Leaderboard</div>
+              <iframe class="embedded-iframe" style="height:755px;" src="subpages/leaderboard.html" title="Video World Models Leaderboard"></iframe>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <div class="container">
+        <h2>Contact</h2>
+        <p>For questions or to submit your own results, reach out at <a href="mailto:you@example.com">you@example.com</a>.</p>
+        <h3 class="bibtex-title">BibTeX</h3>
+        <div class="bibtex-wrap">
+          <button class="bibtex-copy-btn" type="button" aria-label="Copy BibTeX">Copy</button>
+        <pre class="bibtex">
+@inproceedings{2025world-in-world,
+    title={World-in-World: World Models in a Closed-Loop World},
+    author={},
+    booktitle={},
+    year={2025}
+}
+        </pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <p>© <span id="year"></span> Your Name(s). Design inspired by the structure of KineMask; all content here is original.</p>
+</div>
+  </footer>
+  <script src="assets/main.js"></script>
+</body>
+</html>

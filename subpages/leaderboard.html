@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 World-In-World Leaderboard</title>
+    <link rel="icon" type="image/svg+xml" href="../media/genex_logo.png">
+    <link rel="shortcut icon" type="image/svg+xml" href="../media/genex_logo.png">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            margin: 0;
+            font-weight: 300;
+        }
+
+        .chart-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0 0 30px 0;
+            color: #ffffff;
+        }
+
+        .rankings {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .model-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            border-left: 4px solid transparent;
+        }
+
+        .model-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(4px) translateY(0);
+        }
+
+        .model-item.commercial { border-left-color: #ec4899; }
+        .model-item.research { border-left-color: #06b6d4; }
+        .model-item.open-source { border-left-color: #10b981; }
+
+        .rank {
+            background: rgba(255, 255, 255, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 20px;
+            font-size: 16px;
+            min-width: 36px;
+        }
+
+        .model-info {
+            flex: 1;
+            margin-right: 20px;
+            min-width: 200px;
+        }
+
+        .model-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .model-category {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .metrics-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-left: auto;
+        }
+
+        .metric-group {
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .task-success {
+            color: #f59e0b;
+        }
+
+        .gen-quality {
+            color: #6366f1;
+        }
+
+        .progress-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 200px;
+            margin: 0 20px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: all 1.2s ease-in-out;
+            width: 0%;
+        }
+
+        .success-bar { background: linear-gradient(90deg, #10b981, #f59e0b); }
+        .quality-bar { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        .commercial-color { background: #ec4899; }
+        .research-color { background: #06b6d4; }
+        .open-source-color { background: #10b981; }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .model-item.animate {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @media (max-width: 968px) {
+            .container {
+                padding: 20px;
+            }
+
+            .title {
+                font-size: 2.5rem;
+            }
+
+            .model-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .metrics-section {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .progress-bars {
+                width: 100%;
+                margin: 12px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">World-In-World Leaderboard</h1>
+            <p class="subtitle">Measuring performance on task success and generation quality</p>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color commercial-color"></div>
+                <span>Zero-Shot Models</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color research-color"></div>
+                <span>Post-Trained Models</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color open-source-color"></div>
+                <span>Others</span>
+            </div>
+        </div>
+
+        <h2 class="chart-title">Performance Rankings</h2>
+        <div class="rankings" id="rankings-container"></div>
+
+        <div class="footer">
+            <p>Task Success Rate measures the completion of task goals • Generation Quality measures aesthetics and image quality</p>
+        </div>
+    </div>
+    <script>
+        const models = [
+          {
+            name: "Runway Gen4",
+            category: "Runway • Video Generation",
+            type: "zero-shot video",
+            success: 64.79,
+            quality: 0.450638
+          },
+          {
+            name: "Wan2.1†",
+            category: "Alibaba • Video Generation",
+            type: "post-trained video",
+            success: 62.61,
+            quality: 0.379627
+          },
+          {
+            name: "SVD†",
+            category: "Stability AI • Video Generation",
+            type: "post-trained video",
+            success: 60.98,
+            quality: 0.362787
+          },
+          {
+            name: "Cosmos-P2†",
+            category: "NVIDIA • Video Generation",
+            type: "post-trained video",
+            success: 60.25,
+            quality: 0.352225
+          },
+          {
+            name: "Wan2.2 A14B",
+            category: "Alibaba • Video Generation",
+            type: "zero-shot video",
+            success: 59.53,
+            quality: 0.459142
+          },
+          {
+            name: "Wan2.1",
+            category: "Alibaba • Video Generation",
+            type: "zero-shot video",
+            success: 58.26,
+            quality: 0.478106
+          },
+          {
+            name: "SVD",
+            category: "Stability AI • Video Generation",
+            type: "zero-shot video",
+            success: 57.71,
+            quality: 0.371056
+          },
+          {
+            name: "Hunyuan",
+            category: "Hunyuan • Video Generation",
+            type: "zero-shot video",
+            success: 57.71,
+            quality: 0.396051
+          },
+          {
+            name: "SE3DS",
+            category: "Open Source • Other",
+            type: "other",
+            success: 57.53,
+            quality: 0.364727
+          },
+          {
+            name: "LTXVideo†",
+            category: "Lightricks • Video Generation",
+            type: "post-trained video",
+            success: 57.53,
+            quality: 0.340077
+          },
+          {
+            name: "NWM",
+            category: "Open Source • Other",
+            type: "other",
+            success: 57.35,
+            quality: 0.324765
+          },
+          {
+            name: "Pathdreamer",
+            category: "Open Source • Other",
+            type: "other",
+            success: 56.99,
+            quality: 0.339489
+          },
+          {
+            name: "Wan2.2 5B†",
+            category: "Alibaba • Video Generation",
+            type: "post-trained video",
+            success: 56.25,
+            quality: 0.380021
+          },
+          {
+            name: "LTXVideo",
+            category: "Lightricks • Video Generation",
+            type: "zero-shot video",
+            success: 56.08,
+            quality: 0.382416
+          },
+          {
+            name: "Cosmos-P2",
+            category: "NVIDIA • Video Generation",
+            type: "zero-shot video",
+            success: 55.35,
+            quality: 0.481732
+          },
+          {
+            name: "Wan2.2 5B",
+            category: "Alibaba • Video Generation",
+            type: "zero-shot video",
+            success: 55.35,
+            quality: 0.392775
+          }
+        ];
+
+        function renderModels() {
+            const container = document.getElementById("rankings-container");
+            models.sort((a, b) => b.success - a.success);
+
+
+            models.forEach((model, index) => {
+                const rank = index + 1;
+                const delay = rank * 100;
+
+
+                let type;
+                if (model.name.includes("†")) {
+                    // type = "post-trained video"; // 蓝色
+                    type = "research"; // 蓝色
+                } else if (model.type.includes("other")) {
+                    // type = "other"; // 绿色
+                    type = "open-source"; // 绿色
+                } else {
+                    // type = "zero-shot video"; // 红色
+                    type = "commercial"; // 红色
+                }
+
+
+                const item = document.createElement("div");
+                item.className = `model-item ${type}`;
+                item.dataset.delay = delay;
+
+
+                item.innerHTML = `
+                    <div class="rank">${rank}</div>
+                    <div class="model-info">
+                    <div class="model-name">${model.name}</div>
+                    <div class="model-category">${model.category}</div>
+                    </div>
+                    <div class="progress-bars">
+                    <div class="progress-bar">
+                    <div class="progress-fill success-bar" data-width="${Math.round(model.success * 1.6)}"></div>
+                    </div>
+                    <div class="progress-bar">
+                    <div class="progress-fill quality-bar" data-width="${Math.round((model.quality || 0) * 200)}"></div>
+                    </div>
+                    </div>
+                    <div class="metrics-section">
+                    <div class="metric-group">
+                    <div class="metric-label">Task Success</div>
+                    <div class="metric-value task-success">${model.success.toFixed(1)}%</div>
+                    </div>
+                    <div class="metric-group">
+                    <div class="metric-label">Gen Quality</div>
+                    <div class="metric-value gen-quality">${model.quality ? model.quality.toFixed(3) : "–"}</div>
+                    </div>
+                    </div>
+                `;
+
+                container.appendChild(item);
+            });
+        }
+
+        function initializeAnimations() {
+          const items = document.querySelectorAll('.model-item');
+          items.forEach((item, index) => {
+              const delay = parseInt(item.dataset.delay) || index * 100;
+              setTimeout(() => {
+                  item.classList.add('animate');
+                  animateProgressBars(item);
+              }, delay);
+          });
+        }
+
+        function animateProgressBars(item) {
+          const progressFills = item.querySelectorAll('.progress-fill');
+          setTimeout(() => {
+              progressFills.forEach(fill => {
+                  const targetWidth = fill.dataset.width;
+                  fill.style.width = targetWidth + '%';
+              });
+          }, 300);
+        }
+
+        function addInteractivity() {
+          document.querySelectorAll('.model-item').forEach(item => {
+              item.addEventListener('mouseenter', function() {
+                  const progressBars = this.querySelectorAll('.progress-fill');
+                  progressBars.forEach(bar => {
+                      bar.style.transform = 'scaleY(1.3)';
+                      bar.style.boxShadow = '0 0 15px rgba(255, 255, 255, 0.2)';
+                  });
+              });
+
+              item.addEventListener('mouseleave', function() {
+                  const progressBars = this.querySelectorAll('.progress-fill');
+                  progressBars.forEach(bar => {
+                      bar.style.transform = 'scaleY(1)';
+                      bar.style.boxShadow = 'none';
+                  });
+              });
+          });
+        }
+
+        window.addEventListener('load', function() {
+            renderModels();
+            initializeAnimations();
+            addInteractivity();
+        });
+    </script>
+</body>
+</html>

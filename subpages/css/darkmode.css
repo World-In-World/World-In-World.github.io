@@ -1,0 +1,120 @@
+@media (prefers-color-scheme: dark) {
+  body {
+    background: linear-gradient(135deg,#121212 0%,#1e1e1e 100%);
+    color: #eee;
+  }
+
+  .selector-shell, .demo-shell, .panel-card, .step-card, .plan-box, .iteration-display {
+    background: #1f1f1f;
+    color: #eee;
+    border-color: #333;
+  }
+
+  .thumb-card {
+    background:#2a2a2a;
+    border-color:#444;
+  }
+  .thumb-card.selected {
+    background:linear-gradient(135deg,#244024 0%,#1a2a1a 100%);
+    border-color:#34a853;
+  }
+
+  .scenario-info {
+    background:linear-gradient(135deg,#3a2c00 0%,#5a4200 100%);
+    color:#ffda6a;
+  }
+
+  .section-header {
+    background:linear-gradient(135deg,#34a853,#4285f4);
+    color:#fff;
+  }
+  .results-section .section-header {
+    background:linear-gradient(135deg,#ea4335,#fbbc04);
+  }
+  .iteration-header {
+    background:linear-gradient(135deg,#4285f4,#34a853);
+    color:#fff;
+  }
+  .sequence-indicator {
+    background:linear-gradient(135deg,#ff6b6b,#4ecdc4);
+    color:#fff;
+  }
+
+  #modelSelector {
+    background: linear-gradient(135deg, #333 0%, #2a2a2a 100%);
+    border-color: #555;
+    color: #eee;
+  }
+  
+  #modelSelector::after {
+    color: #ccc;
+  }
+  
+  #modelSelector:hover {
+    border-color: #4285f4;
+  }
+  
+  #modelSelector:focus {
+    border-color: #4285f4;
+  }
+
+  .success-explain {
+    background:#1e4620;
+    border-color:#2e7d32;
+    color:#a5d6a7;
+  }
+  .final-status-display.success {
+    background:#2e7d32;
+    color:#fff;
+  }
+
+  .conf-bar {
+    background:#333;
+  }
+  .conf-fill {
+    background:linear-gradient(90deg,#ea4335,#fbbc04,#34a853);
+  }
+
+  .nav-btn, .start-btn {
+    background:linear-gradient(135deg,#3399ff,#33cc66);
+    color:#fff;
+    border:none;
+  }
+  
+  #currentScenarioBox .scenario-text,
+  #currentScenarioBox .scenario-text * {
+    color: #111 !important;
+  }
+  
+  .final-result-title {
+    color: #eee !important;
+  }
+
+  .step-num {
+    background: #555 !important;
+    color: #fff !important;
+  }
+
+  .step-card div[style*="background:#fff3cd"] {
+    background: #5a4a00 !important;
+    border-color: #d6b400 !important;
+    color: #fff6d5 !important;
+  }
+
+  .flow-num {
+    background: #444 !important;  
+    color: #fff !important;
+  }
+  
+  .step-num {
+    background: #444 !important;
+    color: #fff !important;
+  }
+
+  .select-wrap select {
+    background: linear-gradient(135deg,#333 0%,#2a2a2a 100%);
+    border-color: #555;
+    color: #eee;
+  }
+  .select-wrap::after { border-top-color: #ccc; }
+}
