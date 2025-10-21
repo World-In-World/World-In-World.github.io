@@ -74,14 +74,18 @@
   margin-top: 12px;
 }
 
-.sim-grid video {
+/* World model content styling */
+.sim-grid video,
+.wm-video,
+.wm-content,
+.wm-content img,
+.wm-content video {
   width: 100%;
   border-radius: 4px;
   object-fit: contain;
-  max-height: 200px;
+  max-height: 320px;
 }
 
-/* ========= 响应式布局 ========= */
 @media (max-width: 1100px) {
   .overview-panel,
   .step-grid {

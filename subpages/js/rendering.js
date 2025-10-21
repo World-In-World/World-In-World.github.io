@@ -117,7 +117,7 @@ function displayFrame(i, skipVideoInit = false) {
           <div style="font-weight:700;font-size:.9em;margin-bottom:6px">${p?.title || 'Plan'}</div>
           <div style="font-size:.85em;margin-bottom:6px">${p?.actionPlan || '—'}</div>
           <div style="font-size:.75em;color:#666">View: ${p?.view || '—'} | Landmark: ${p?.landmark}</div>
-          <div id="aeqa-wm-${f.frameKey}-${p.pngIndex}" style="margin-top:8px"></div>
+          <div id="aeqa-wm-${f.frameKey}-${p.pngIndex}" class="wm-content" style="margin-top:8px"></div>
         </div>`;
       }
       return `<div class="plan-box">
@@ -142,7 +142,7 @@ function displayFrame(i, skipVideoInit = false) {
             <span class="step-title">High-level Plans & World Model Simulation</span>
             ${planCount > 2 ? `<button class="fold-btn" onclick="togglePlans(${i})" style="margin-left:auto;padding:2px 8px;font-size:.75em;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer">${showAll ? '▲ Fold' : '▼ Show All (' + planCount + ')'}</button>` : ''}
           </div>
-          <div class="plan-pairs" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+          <div class="plan-pairs" style="grid-template-columns:1fr 1fr">
             ${hasPlans 
               ? visiblePlans.map((p, idx) => planBox(p, idx, true)).join('')
               : `<div style="padding:12px;text-align:center;color:#999;font-style:italic">
@@ -176,8 +176,9 @@ function displayFrame(i, skipVideoInit = false) {
                     <div style="font-size:.8em;color:#555"><i>${p.reasoning}</i></div>
                     <div style="font-size:.85em">${formatNumberedList(p.languagePlan)}</div>
                     <video id="manip-wm-${f.frameKey}-${p.pngIndex}" 
-                          autoplay loop muted 
-                          style="max-width:100%;border-radius:4px;margin-top:8px"></video>
+                      autoplay loop muted 
+                      class="wm-video"
+                      style="margin-top:8px"></video>
                   </div>`).join('')
               : `<div style="padding:12px;text-align:center;color:#999;font-style:italic">
                   (No planner data for this step)
@@ -414,7 +415,7 @@ function displayFrame(i, skipVideoInit = false) {
             try {
               const res = await fetch(pngUrl, {method: 'HEAD'});
               if (res.ok) {
-                container.innerHTML = `<img src="${pngUrl}" style="max-width:100%;border-radius:4px;margin-top:4px" onerror="this.style.display='none'">`;
+                container.innerHTML = `<img src="${pngUrl}" onerror="this.style.display='none'">`;
               }
             } catch (e) {
               console.warn('PNG not found:', pngUrl);

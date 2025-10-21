@@ -110,6 +110,19 @@ if (currentScenario.taskType === "AEQA" || currentScenario.taskType === "IGNav" 
   // Display first frame
   displayFrame(0);
 
+  const finalVid = document.getElementById('finalVideo');
+  const finalUrl = `${currentScenario.base}/vis_ar.mp4`;
+  probe(finalUrl).then(ok => {
+    if (ok) {
+      finalVid.src = finalUrl;
+      finalVid.style.display = 'block';
+      finalVid.load?.();
+    } else {
+      finalVid.removeAttribute('src');
+      finalVid.style.display = 'none';
+    }
+  });
+
   // Load and update final status
   const metrics = await loadMetrics();
   updateFinalStatus(metrics);
