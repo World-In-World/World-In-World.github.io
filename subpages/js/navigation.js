@@ -53,26 +53,6 @@ function processCurrentFrame() {
   }, 700);
 }
 
-// Navigate to previous frame
-function previousFrame() {
-  if (isPlaying) togglePlayback();
-  if (currentFrameIndex > 0) {
-    const prevIndex = currentFrameIndex - 1;
-    displayFrame(prevIndex);
-    if (!frames[currentFrameIndex].completed) processCurrentFrame();
-  }
-}
-
-// Navigate to next frame
-function nextFrame() {
-  if (isPlaying) togglePlayback();
-  if (currentFrameIndex < frames.length - 1) {
-    const nextIndex = currentFrameIndex + 1;
-    displayFrame(nextIndex);
-    if (!frames[currentFrameIndex].completed) processCurrentFrame();
-  }
-}
-
 // Toggle playback
 function togglePlayback() {
   const btn = document.getElementById('playBtn');
@@ -98,23 +78,29 @@ function togglePlayback() {
   }, 2600);
 }
 
-// Go to final frame
-function goToFinalFrame() {
+// Frame navigation general helper function
+function navigateToFrame(targetIndex) {
   if (isPlaying) togglePlayback();
-  const finalIndex = frames.length - 1;
-  if (finalIndex >= 0 && currentFrameIndex !== finalIndex) {
-    displayFrame(finalIndex);
-    if (!frames[finalIndex].completed) processCurrentFrame();
+  if (targetIndex >= 0 && targetIndex < frames.length && targetIndex !== currentFrameIndex) {
+    displayFrame(targetIndex);
+    if (!frames[targetIndex].completed) processCurrentFrame();
   }
 }
 
-// Go to first frame
+function previousFrame() {
+  if (currentFrameIndex > 0) navigateToFrame(currentFrameIndex - 1);
+}
+
+function nextFrame() {
+  if (currentFrameIndex < frames.length - 1) navigateToFrame(currentFrameIndex + 1);
+}
+
 function goToFirstFrame() {
-  if (isPlaying) togglePlayback();
-  if (currentFrameIndex !== 0) {
-    displayFrame(0);
-    if (!frames[0].completed) processCurrentFrame();
-  }
+  navigateToFrame(0);
+}
+
+function goToFinalFrame() {
+  navigateToFrame(frames.length - 1);
 }
 
 // Toggle plan visibility

@@ -1,6 +1,33 @@
+// Base URLs
+const DATASET_BASE = 'https://huggingface.co/datasets/zonszer/demo_source_data/resolve/main';
+
+function getManifestUrl(taskType) {
+  return `${DATASET_BASE}/${taskType}/manifest_${taskType.toLowerCase()}.json`;
+}
+
+function getBaseUrl(taskType, model, env, episode) {
+  return `${DATASET_BASE}/${taskType}/${model}/${env}/${episode}`;
+}
+
+// Helper for current scenario
+function getCurrentBaseUrl() {
+  const {taskType, model, env, episode} = currentScenario;
+  return getBaseUrl(taskType, model, env, episode);
+}
+
 // Format number as percentage
 function pct(x) {
   return (Math.round(x * 1000) / 10).toFixed(1) + '%';
+}
+
+// Return true for task types that need action offset: ar and ignav
+function needsActionOffset(taskType) {
+  return taskType === "AR" || taskType === "IGNav";
+}
+
+// Return true for task types that need to hide bev: aeqa and manip
+function hideBEV(taskType) {
+  return taskType === "AEQA" || taskType === "Manip";
 }
 
 // Fetch image as blob URL

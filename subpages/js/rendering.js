@@ -54,7 +54,7 @@ function displayFrame(i, skipVideoInit = false) {
   console.log('ActionDataForSelection for Step 3:', f.actionDataForSelection?.step);
   
   // Use different data sources for different steps
-  const actionDataForAnswerer = (currentScenario.taskType === "AR" || currentScenario.taskType === "IGNav") 
+  const actionDataForAnswerer = (needsActionOffset(currentScenario.taskType))
     ? (f.actionDataForSelection || f.actionData)
     : f.actionData;
   
@@ -408,13 +408,9 @@ function displayFrame(i, skipVideoInit = false) {
       })();
     }
     else if (currentScenario.taskType !== "AEQA" && currentScenario.taskType !== "Manip") {
-      // AR and IGNav: use previous frame's videos (offset by 1)
       (async () => {
         try {
-          // For frame N, show videos from frame N-1
-          const videoFrameKey = currentFrameIndex > 0 ? frames[currentFrameIndex - 1].frameKey : f.frameKey;
-          
-          const urls = await findUpToTwoVideos(videoFrameKey);
+          const urls = await findUpToTwoVideos(f.frameKey);  // no offset
           setVideoSrcOrPlaceholder(document.getElementById(`pred1_${f.frameKey}`), urls[0] || null);
           setVideoSrcOrPlaceholder(document.getElementById(`pred2_${f.frameKey}`), urls[1] || null);
         } catch (e) {

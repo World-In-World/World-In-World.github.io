@@ -4,7 +4,7 @@ async function startDemo() {
   document.getElementById('demoShell').classList.add('visible');
 
   // Get models for selector
-  const manifestUrl = `https://huggingface.co/datasets/zonszer/demo_source_data/resolve/main/${currentScenario.taskType}/manifest_${currentScenario.taskType.toLowerCase()}.json`;
+  const manifestUrl = getManifestUrl(currentScenario.taskType);
   const resp = await fetch(manifestUrl);
   const manifest = await resp.json();
   const models = Object.keys(manifest.models);
@@ -42,18 +42,7 @@ async function startDemo() {
   await reloadScenario();
 
   // Set final video
-  const finalVid = document.getElementById('finalVideo');
-  const finalUrl = `${currentScenario.base}/vis_ar.mp4`;
-  probe(finalUrl).then(ok => {
-    if (ok) {
-      finalVid.src = finalUrl;
-      finalVid.style.display = 'block';
-      finalVid.load?.();
-    } else {
-      finalVid.removeAttribute('src');
-      finalVid.style.display = 'none';
-    }
-  });
+  loadFinalVideo();
 
   setTimeout(processCurrentFrame, 900);
   document.querySelector('.overview-panel')
@@ -80,7 +69,7 @@ async function reloadScenario() {
   const overview = document.querySelector(".overview-panel");
 
   if (bevPanel && overview) {
-    if (currentScenario.taskType === "AEQA" || currentScenario.taskType === "Manip") {
+    if (hideBEV(currentScenario.taskType)) {
       bevPanel.style.display = "none";
       overview.style.gridTemplateColumns = "1fr 1fr";
     } else {
@@ -95,8 +84,7 @@ async function reloadScenario() {
     
     // For AR and IGNav: action data comes from next frame
     let actionDataForStep3 = d;
-    if ((currentScenario.taskType === "AR" || currentScenario.taskType === "IGNav") 
-        && i < availableKeys.length - 1) {
+    if (needsActionOffset(currentScenario.taskType) && i < availableKeys.length - 1) {
       actionDataForStep3 = realActionData[availableKeys[i + 1]];  // Use next frame's data for actions
     }
     
@@ -120,6 +108,14 @@ async function reloadScenario() {
   // Display first frame
   displayFrame(0);
 
+  loadFinalVideo();
+
+  // Load and update final status
+  const metrics = await loadMetrics();
+  updateFinalStatus(metrics);
+}
+
+function loadFinalVideo() {
   const finalVid = document.getElementById('finalVideo');
   const finalUrl = `${currentScenario.base}/vis_ar.mp4`;
   probe(finalUrl).then(ok => {
@@ -132,10 +128,6 @@ async function reloadScenario() {
       finalVid.style.display = 'none';
     }
   });
-
-  // Load and update final status
-  const metrics = await loadMetrics();
-  updateFinalStatus(metrics);
 }
 
 // Reset state for new scenario
@@ -185,7 +177,7 @@ document.addEventListener('change', async e => {
     currentScenario.model = e.target.value;
 
     // Fetch manifest and update episode
-    const manifestUrl = `https://huggingface.co/datasets/zonszer/demo_source_data/resolve/main/${currentScenario.taskType}/manifest_${currentScenario.taskType.toLowerCase()}.json`;
+    const manifestUrl = getManifestUrl(currentScenario.taskType);
     const resp = await fetch(manifestUrl);
     const manifest = await resp.json();
 

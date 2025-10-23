@@ -21,7 +21,7 @@ async function loadScenarios() {
 
 // Load preview image for a scenario
 async function loadPreviewImage(scenario, taskType) {
-  const manifestUrl = `https://huggingface.co/datasets/zonszer/demo_source_data/resolve/main/${taskType}/manifest_${taskType.toLowerCase()}.json`;
+  const manifestUrl = getManifestUrl(taskType);
   const manifest = await fetch(manifestUrl).then(r => r.json());
 
   const models = manifest.models || {};
@@ -40,7 +40,7 @@ async function loadPreviewImage(scenario, taskType) {
   // Set defaults
   scenario.model = defaultModel;
   scenario.episode = defaultEpisode;
-  scenario.base = `https://huggingface.co/datasets/zonszer/demo_source_data/resolve/main/${taskType}/${defaultModel}/${scenario.env}/${defaultEpisode}`;
+  scenario.base = getBaseUrl(taskType, defaultModel, scenario.env, defaultEpisode);
 
   // Return preview path
   if (taskType === "AR") return `${scenario.base}/A000/real_obs_bbox.png`;
@@ -70,7 +70,7 @@ async function applySelection(idx) {
   document.getElementById('startBtn').disabled = false;
 
   // Load manifest for model/episode info
-  const manifestUrl = `https://huggingface.co/datasets/zonszer/demo_source_data/resolve/main/${currentScenario.taskType}/manifest_${currentScenario.taskType.toLowerCase()}.json`;
+  const manifestUrl = getManifestUrl(currentScenario.taskType);
   const resp = await fetch(manifestUrl);
   const manifest = await resp.json();
 

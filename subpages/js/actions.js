@@ -4,7 +4,7 @@ let availableKeys = [];
 
 // Load action data for current scenario
 async function loadActionData() {
-  const manifestUrl = `https://huggingface.co/datasets/zonszer/demo_source_data/resolve/main/${currentScenario.taskType}/manifest_${currentScenario.taskType.toLowerCase()}.json`;
+  const manifestUrl = getManifestUrl(currentScenario.taskType);
   const resp = await fetch(manifestUrl);
   const manifest = await resp.json();
 
@@ -19,7 +19,7 @@ async function loadActionData() {
   if (!epData) throw new Error(`Episode ${currentScenario.episode} not found`);
 
   // Set base path
-  currentScenario.base = `https://huggingface.co/datasets/zonszer/demo_source_data/resolve/main/${currentScenario.taskType}/${currentScenario.model}/${currentScenario.env}/${currentScenario.episode}`;
+  currentScenario.base = getCurrentBaseUrl();
 
   // Set preview image
   if (currentScenario.taskType === "AR") {
@@ -34,9 +34,6 @@ async function loadActionData() {
   let keys = expandFrames(epData);
   currentScenario.lastFrameKey = keys[keys.length - 1];
 
-  // if (!(epData.continuous_frame === false && epData.frames.length === 1 && epData.frames[0] === 0)) {
-  //   keys = keys.slice(1);
-  // }
   availableKeys = keys;
 
   // Preload action plans
@@ -195,18 +192,6 @@ function getRankedActions(d, taskType) {
   }
 
   if (taskType === "AEQA") {
-    // const high = d.answerer_data?.["planner_highlevel.json"] || [];
-    // const imagine = d.answerer_data?.["planner_highlevel_imagine.json"] || [];
-    // const all = [...high, ...imagine];
-    // return all.map((item, i) => ({
-    //   title: item["Action Plan"] || `Decision ${i + 1}`,
-    //   steps: [item["Action Plan"] || "—"],
-    //   reason: item["Reason"] || "",
-    //   view: item["Chosen View"] || null,
-    //   landmark: item["Chosen Landmark"] ?? null,
-    //   conf: 0,
-    //   ranking: i + 1
-    // }));
     const selected = d.answerer_data?.["planner_highlevel.json"]?.[0];
     if (selected) {
       return [{
