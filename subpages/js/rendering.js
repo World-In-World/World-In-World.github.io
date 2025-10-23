@@ -45,7 +45,20 @@ function displayFrame(i, skipVideoInit = false) {
   if (i < 0 || i >= frames.length) return;
   currentFrameIndex = i;
   const f = frames[i];
-  let {label, score} = getTopAnswerer(f.actionData);
+  // Debug logs
+  console.log('=== Displaying Frame', i, '===');
+  console.log('Frame key:', f.frameKey);
+  console.log('Plans (Step 2):', f.plans);
+  console.log('Actions (Step 3):', f.actions3);
+  console.log('ActionData for Step 2:', f.actionData?.step);
+  console.log('ActionDataForSelection for Step 3:', f.actionDataForSelection?.step);
+  
+  // Use different data sources for different steps
+  const actionDataForAnswerer = (currentScenario.taskType === "AR" || currentScenario.taskType === "IGNav") 
+    ? (f.actionDataForSelection || f.actionData)
+    : f.actionData;
+  
+  let {label, score} = getTopAnswerer(actionDataForAnswerer);
 
   // Handle IGNav/Manips last frame
   if ((currentScenario.taskType === "IGNav" || currentScenario.taskType === "Manip") 
@@ -123,7 +136,7 @@ function displayFrame(i, skipVideoInit = false) {
       }
       return `<div class="plan-box">
         <div style="font-weight:700;font-size:.8em;margin-bottom:4px">${p?.title || 'Plan'}</div>
-        <ul style="padding-left:18px">${(p?.steps || []).slice(0, 4).map(s => `<li>${s}</li>`).join('') || '<li>—</li>'}</ul>
+        <ul style="padding-left:18px">${(p?.steps || []).map(s => `<li>${s}</li>`).join('') || '<li>—</li>'}</ul>
       </div>`;
     };
 

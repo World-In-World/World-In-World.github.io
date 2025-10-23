@@ -71,9 +71,9 @@ async function reloadScenario() {
   await loadActionData();
 
   // Load metrics 
-if (currentScenario.taskType === "AEQA" || currentScenario.taskType === "IGNav" || currentScenario.taskType === "Manip") {
-  currentScenario.metrics = await loadMetrics();  
-}
+  if (currentScenario.taskType === "AEQA" || currentScenario.taskType === "IGNav" || currentScenario.taskType === "Manip") {
+    currentScenario.metrics = await loadMetrics();  
+  }
 
   // Update BEV visibility (hide for AEQA)
   const bevPanel = document.getElementById("bevHeaderTitle")?.parentElement;
@@ -92,16 +92,25 @@ if (currentScenario.taskType === "AEQA" || currentScenario.taskType === "IGNav" 
   // Build frames
   frames = availableKeys.map((k, i) => {
     const d = realActionData[k];
+    
+    // For AR and IGNav: action data comes from next frame
+    let actionDataForStep3 = d;
+    if ((currentScenario.taskType === "AR" || currentScenario.taskType === "IGNav") 
+        && i < availableKeys.length - 1) {
+      actionDataForStep3 = realActionData[availableKeys[i + 1]];  // Use next frame's data for actions
+    }
+    
     return {
-      frameNumber: i + 1,
+      frameNumber: i,
       frameKey: k,
       status: i === 0 ? 'current' : 'pending',
-      plans: getPlansForScenario(d, currentScenario.taskType),
-      actions3: getRankedActions(d, currentScenario.taskType),
+      plans: getPlansForScenario(d, currentScenario.taskType),  // Plans from current frame
+      actions3: getRankedActions(actionDataForStep3, currentScenario.taskType),  // Actions from next frame for AR/IGNav
       selectedAction: null,
       completed: false,
       currentStep: 0,
-      actionData: d
+      actionData: d, 
+      actionDataForSelection: actionDataForStep3  
     };
   });
 
