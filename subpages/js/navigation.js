@@ -108,6 +108,15 @@ function goToFinalFrame() {
   }
 }
 
+// Go to first frame
+function goToFirstFrame() {
+  if (isPlaying) togglePlayback();
+  if (currentFrameIndex !== 0) {
+    displayFrame(0);
+    if (!frames[0].completed) processCurrentFrame();
+  }
+}
+
 // Toggle plan visibility
 function togglePlans(frameIndex) {
   if (frameIndex < 0 || frameIndex >= frames.length) return;

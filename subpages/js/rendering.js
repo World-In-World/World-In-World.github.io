@@ -69,6 +69,7 @@ function displayFrame(i, skipVideoInit = false) {
     <div class="iteration-header">
       <div><b>Frame ${f.frameNumber}</b> — Closed Loop Iteration</div>
       <div>
+        <button class="nav-btn" id="firstBtn" ${currentFrameIndex === 0 ? 'disabled' : ''} onclick="goToFirstFrame()">⏮ First</button>
         <button class="nav-btn" id="prevBtn" ${currentFrameIndex === 0 ? 'disabled' : ''} onclick="previousFrame()">◀ Previous</button>
         <button class="nav-btn" id="nextBtn" ${currentFrameIndex >= frames.length - 1 ? 'disabled' : ''} onclick="nextFrame()">Next ▶</button>
         <button class="nav-btn" id="finalBtn" ${currentFrameIndex >= frames.length - 1 ? 'disabled' : ''} onclick="goToFinalFrame()">Final ⏭</button>
@@ -339,7 +340,7 @@ function displayFrame(i, skipVideoInit = false) {
         </div>`;
     } else {
       // Normal action card
-      action = `
+        action = `
         <div class="step-card ${f.currentStep === 3 ? 'active' : ''}">
           <div class="step-h"><span class="step-num">3</span><span class="step-title">Action Selection</span></div>
           ${currentScenario.taskType !== "AEQA" && currentScenario.taskType !== "IGNav" ? `
