@@ -8,6 +8,10 @@ async function startDemo() {
   const resp = await fetch(manifestUrl);
   const manifest = await resp.json();
   const models = Object.keys(manifest.models);
+  // Filter out FTwan22_A14B for AEQA (data format issue)
+  if (currentScenario.taskType === "AEQA") {
+    models = models.filter(m => m !== "FTwan22_A14B");
+  }
   const modelNameMap = {
     "FTcosmos": "Cosmos-P2†",
     "FTwan21": "Wan2.1†",
