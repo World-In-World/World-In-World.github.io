@@ -13,6 +13,7 @@ async function startDemo() {
     "FTwan21": "Wan2.1†",
     "FTwan22_A14B": "Wan2.2 A14B†",
     "GTsim": "Ground Truth",
+    "gen4tur": "Gen4 Turbo",
     "igen": "SVD†",
     "svd": "SVD",
     "wan21": "Wan2.1"
